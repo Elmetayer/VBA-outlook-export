@@ -1,5 +1,6 @@
 # VBA-outlook-export
-VBA executed in Outlook for exporting email details in csv format
+VBA macro executed in Outlook for exporting email details in csv format.
+I've made this to elaborate statistics on my email sending and receiving in my professional environment though the years ...
 
 Once executed in Outlook, this VBA code allows for exporting the details of all emails in a selected folder (including subfolders as the case may be).
 For each email, following information is exported in a csv file:
