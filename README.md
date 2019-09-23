@@ -1,7 +1,7 @@
 # VBA-outlook-export
 VBA executed in Outlook for exporting email details in csv format
 
-Once executed in Outlook, this VBA code allows for exporting all emails in a selected folder (including subfolders as the case may be).
+Once executed in Outlook, this VBA code allows for exporting the details of all emails in a selected folder (including subfolders as the case may be).
 For each email, following information is exported in a csv file:
 FROM : clean sender's name, ready for post-processing
 FROM_ADDRESS : sender's email address
@@ -25,4 +25,9 @@ EMAIL_NUMBER : number of email addresses in email's body
 ATTACHMENT_NUMBER : email's number of attachments
 ATTACHMENT_SIZE : email's total size of attachments
 
+The VBA macro asks to select any folder of your mailbox.
+Once the folder is selected, the details of all emails in the selected folder (including its subfolders as the case may be) are exported in a CSV file. 
+The SCV file name and its folder are specified in the "fileName" variable: you will have to change this variable in order to successfully export your data.
+
 One csv record (i.e. line) is created for each recipient of a given email, so this function can generate several CSV records for a given email. Certain email attributes (e.g. sender, subject, etc.) are therefore repeated for each generated record.
+
