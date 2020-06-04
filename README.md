@@ -28,6 +28,8 @@ In the "ExportAllEmail_Details" csv file, one csv record (i.e. line) is created 
 - HOUR : hour when email was sent
 - DAY : day when email was sent
 - WEEKDAY : weekday when email was sent
+- WEEK : week number when email was sent
+- YEAR : year when email was sent
 - MONTH : month when email was sent
 - SUBJECT : email's subject
 - SUBJECT_WORDS : number of words in email's subject
