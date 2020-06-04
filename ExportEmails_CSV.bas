@@ -80,6 +80,8 @@ On Error GoTo ErrHandler
     'HOUR : hour when email was sent
     'DAY : day when email was sent
     'WEEKDAY : weekday when email was sent
+    'WEEK : week number when email was sent
+    'YEAR : year when email was sent
     'MONTH : month when email was sent
     'SUBJECT : email's subject, without "RE:" or "FW:"
     'CONVERSATION : contains element if the email is linked with a previous one, e.g. "RE:" or "FW:"
@@ -92,18 +94,18 @@ On Error GoTo ErrHandler
     'EMAIL_ITEM_KEY : key representing the email (see "MailItem_KEY" information in email parsing function)
     
     header_all = "FROM" & separator & "FROM_ADDRESS" & separator & "FROM_DOMAIN" & separator & "FROM_NAME" & separator & "TO" & separator & "TO_ADDRESS" & separator & "TO_DOMAIN" & separator & _
-    "TO_NAME" & separator & "TYPE" & separator & "RECIPIENT_NUMBER" & separator & "RECIPIENT_NUMBER_TO" & separator & "RECIPIENT_NUMBER_CC" & separator & "DATE" & separator & "HOUR" & separator & "DAY" & separator & _
-    "WEEKDAY" & separator & "MONTH" & separator & "SUBJECT" & separator & "CONVERSATION" & separator & "SUBJECT_WORDS" & separator & "BODY_WORDS" & separator & "URL_NUMBER" & separator & _
-    "EMAIL_NUMBER" & separator & "ATTACHMENT_NUMBER" & separator & "ATTACHMENT_SIZE" & separator & "EMAIL_ITEM_KEY"
+    "TO_NAME" & separator & "TYPE" & separator & "RECIPIENT_NUMBER" & separator & "RECIPIENT_NUMBER_TO" & separator & "RECIPIENT_NUMBER_CC" & separator & "DATE" & separator & "HOUR" & separator & _
+    "DAY" & separator & "WEEKDAY" & separator & "WEEK" & separator & "YEAR" & separator & "MONTH" & separator & "SUBJECT" & separator & "CONVERSATION" & separator & "SUBJECT_WORDS" & separator & _
+    "BODY_WORDS" & separator & "URL_NUMBER" & separator & "EMAIL_NUMBER" & separator & "ATTACHMENT_NUMBER" & separator & "ATTACHMENT_SIZE" & separator & "EMAIL_ITEM_KEY"
     
     'Print csv header for all emails information
     Print #OutputFileNumDetailsAll, header_all;
 
     'Definition of CSV file header for emails information for from only
     header_from = "FROM" & separator & "FROM_ADDRESS" & separator & "FROM_DOMAIN" & separator & "FROM_NAME" & separator & "RECIPIENT_NUMBER" & separator & "RECIPIENT_NUMBER_TO" & separator & _
-    "RECIPIENT_NUMBER_CC" & separator & "DATE" & separator & "HOUR" & separator & "DAY" & separator & "WEEKDAY" & separator & "MONTH" & separator & "SUBJECT" & separator & _
-    "CONVERSATION" & separator & "SUBJECT_WORDS" & separator & "BODY_WORDS" & separator & "URL_NUMBER" & separator & "EMAIL_NUMBER" & separator & "ATTACHMENT_NUMBER" & separator & _
-    "ATTACHMENT_SIZE" & separator & "EMAIL_ITEM_KEY"
+    "RECIPIENT_NUMBER_CC" & separator & "DATE" & separator & "HOUR" & separator & "DAY" & separator & "WEEKDAY" & separator & "WEEK" & separator & "YEAR" & separator & "MONTH" & separator & _
+    "SUBJECT" & separator & "CONVERSATION" & separator & "SUBJECT_WORDS" & separator & "BODY_WORDS" & separator & "URL_NUMBER" & separator & "EMAIL_NUMBER" & separator & "ATTACHMENT_NUMBER" & _
+    separator & "ATTACHMENT_SIZE" & separator & "EMAIL_ITEM_KEY"
     
     'Print csv header for emails information for from only
     Print #OutputFileNumDetailsFrom, header_from;
@@ -297,12 +299,8 @@ On Error GoTo ErrHandler
 Exit Sub
 
 ErrHandler:
-    If Err.Number = 1004 Then
-        MsgBox strSheet & " doesn't exist", vbOKOnly, "Error"
-    Else
-        MsgBox Err.Number & "; Description: " & Err.Description, vbOKOnly, "Error"
-    End If
-
+    MsgBox Err.Number & "; Description: " & Err.Description, vbOKOnly, "Error"
+    
     Set msg = Nothing
     Set nms = Nothing
     Set fld = Nothing
@@ -363,6 +361,7 @@ Dim MailItem_RECIPIENT_NUMBER_CC As String
 Dim MailItem_DATE As String
 Dim MailItem_DAY As Integer
 Dim MailItem_WEEKDAY As Integer
+Dim MailItem_WEEK As Integer
 Dim MailItem_HOUR As Integer
 Dim MailItem_MINUTE As Integer
 Dim MailItem_SECOND As Integer
@@ -443,8 +442,10 @@ MailItem_SUBJECT_WORDS = CStr(UBound(arr) - LBound(arr) + 1)
 MailItem_DATE = msg.SentOn
 MailItem_DAY = Day(MailItem_DATE)
 MailItem_WEEKDAY = Weekday(MailItem_DATE, vbMonday)
+MailItem_WEEK = Format(MailItem_DATE, "ww")
 MailItem_MONTH = Month(MailItem_DATE)
 MailItem_YEAR = Year(MailItem_DATE)
+
 MailItem_HOUR = Hour(MailItem_DATE)
 MailItem_MINUTE = Minute(MailItem_DATE)
 MailItem_SECOND = Second(MailItem_DATE)
@@ -568,9 +569,9 @@ For Each recipient In msg.Recipients
     mail_content_detailed = MailItem_FROM & separator & MailItem_FROM_ADDRESS & separator & MailItem_FROM_DOMAIN & separator & MailItem_FROM_NAME & separator & MailItem_TO & separator & _
     MailItem_TO_ADDRESS & separator & MailItem_TO_DOMAIN & separator & MailItem_TO_NAME & separator & MailItem_TYPE & separator & MailItem_RECIPIENT_NUMBER & separator & _
     MailItem_RECIPIENT_NUMBER_TO & separator & MailItem_RECIPIENT_NUMBER_CC & separator & MailItem_DATE & separator & MailItem_HOUR & separator & MailItem_DAY & separator & _
-    MailItem_WEEKDAY & separator & MailItem_MONTH & separator & MailItem_SUBJECT & separator & MailItem_CONVERSATION & separator & MailItem_SUBJECT_WORDS & separator & _
-    MailItem_BODY_WORDS & separator & MailItem_URL_NUMBER & separator & MailItem_EMAIL_NUMBER & separator & MailItem_ATTACHMENT_NUMBER & separator & MailItem_ATTACHMENT_SIZE & _
-    separator & MailItem_KEY
+    MailItem_WEEKDAY & separator & MailItem_WEEK & separator & MailItem_YEAR & separator & MailItem_MONTH & separator & MailItem_SUBJECT & separator & MailItem_CONVERSATION & separator & _
+    MailItem_SUBJECT_WORDS & separator & MailItem_BODY_WORDS & separator & MailItem_URL_NUMBER & separator & MailItem_EMAIL_NUMBER & separator & MailItem_ATTACHMENT_NUMBER & separator & _
+    MailItem_ATTACHMENT_SIZE & separator & MailItem_KEY
     
     'Addition of the record content with a carriage return
     mail_collection = mail_collection & carriage_return & mail_content_detailed
@@ -580,8 +581,9 @@ Next recipient
 'Email record without taking into account from information
 mail_content_flat = carriage_return & MailItem_FROM & separator & MailItem_FROM_ADDRESS & separator & MailItem_FROM_DOMAIN & separator & MailItem_FROM_NAME & separator & _
 MailItem_RECIPIENT_NUMBER & separator & MailItem_RECIPIENT_NUMBER_TO & separator & MailItem_RECIPIENT_NUMBER_CC & separator & MailItem_DATE & separator & MailItem_HOUR & separator & _
-MailItem_DAY & separator & MailItem_WEEKDAY & separator & MailItem_MONTH & separator & MailItem_SUBJECT & separator & MailItem_CONVERSATION & separator & MailItem_SUBJECT_WORDS & separator & _
-MailItem_BODY_WORDS & separator & MailItem_URL_NUMBER & separator & MailItem_EMAIL_NUMBER & separator & MailItem_ATTACHMENT_NUMBER & separator & MailItem_ATTACHMENT_SIZE & separator & MailItem_KEY
+MailItem_DAY & separator & MailItem_WEEKDAY & separator & MailItem_WEEK & separator & MailItem_YEAR & separator & MailItem_MONTH & separator & MailItem_SUBJECT & separator & _
+MailItem_CONVERSATION & separator & MailItem_SUBJECT_WORDS & separator & MailItem_BODY_WORDS & separator & MailItem_URL_NUMBER & separator & MailItem_EMAIL_NUMBER & separator & _
+MailItem_ATTACHMENT_NUMBER & separator & MailItem_ATTACHMENT_SIZE & separator & MailItem_KEY
 
 'Creation of function's output
 Set output = New collection
