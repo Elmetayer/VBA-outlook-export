@@ -8,8 +8,10 @@ Prerequisite: the macro is using RegExp, so you have to enable "Microsoft VBScri
 
 When launched, the VBA macro asks to select any folder of your mailbox.
 Once the folder is selected, the details of all emails in the selected folder (including its subfolders as the case may be) are exported in two csv files:
-- “ExportAllEmail_Details”, with all details for each recipient (several records for each email, depending on the number of recipients)
-- "ExportEmail_DetailsFrom, without details for each recipient (one record for each email)
+- "Export_Details_full", with all details for each recipient (several records for each email, depending on the number of recipients)
+- "Export_Details_flat", without details for each recipient (one record for each email), that doesn’t contain the recipient information
+A variable “export_allDetails”, when set to false, allows exporting data only in the Export_Details_flat csv file, this can be useful when exporting a lot of emails.
+
 The CSV file names and folders are specified in the "fileNameDetails_all" and "fileNameDetails_from" variable: you will have to change this variable in order to successfully export your data.
 In the "ExportAllEmail_Details" csv file, one csv record (i.e. line) is created for each recipient of a given email, so this can generate several csv records for a given email. Certain email attributes (e.g. sender, subject, etc.) are therefore repeated for each generated record. For each csv line, following information is exported in the "ExportAllEmail_Details" csv file:
 - FROM : clean sender's name, ready for post-processing
@@ -41,12 +43,12 @@ In the "ExportAllEmail_Details" csv file, one csv record (i.e. line) is created 
 - ATTACHMENT_SIZE : email's total size of attachments
 - EMAIL_ITEM_KEY : key representing the email
 
-In addition, all email bodies (text) are aggregated in a “corpus” txt file. This file can be divided into multiple files in case the whole file is too big (see "maxSizeCorpus" parameter".
+In addition, all email bodies (text) are aggregated in a “corpus” txt file. This file can be divided into multiple files in case the whole file is too big (see "maxSizeCorpus" parameter).
 
 The exported files are organized as follows:
-- a dedicated export folder named “ExportOutlook\yyyymmdd_hhmmss” is created for each export launch (yyyymmdd_hhmmss being the timestamp of extraction generation)
-- the csv files are put at the root of the export folder
-- all email body txt files are put in a “Messages” subfolder
+- a dedicated export folder named "ExportOutlook\yyyymmdd_hhmmss" is created for each export launch (yyyymmdd_hhmmss being the timestamp of extraction generation)
+- the csv files and subfolders are put at the root of the above export folder
+- each email body is exported in a txt file in a "Messages" subfolder, the name of each body txt file is the same as EMAIL_ITEM_KEY information (see hereafter)
 - all corpus txt file(s) are exported in a “Corpus” subfolder
 
-
+"Clean up text" steps are included in the code part where email bodies are exported, in order to remove specific items (recurrent emails signature, premises’ address, etc.) ... but this doesn’t work very well though, especially for signatures.
