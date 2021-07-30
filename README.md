@@ -18,11 +18,11 @@ In the "ExportAllEmail_Details" csv file, one csv record (i.e. line) is created 
 - FROM_ADDRESS : sender's email address
 - FROM_DOMAIN : sender's email domain
 - FROM_NAME : sender's raw name
-- TO : clean recipient's name, ready for post-processing
-- TO_ADDRESS : recipient's email address
-- TO_DOMAIN : sender's email domain
-- TO_NAME : recipient's raw name
-- TYPE : type of reception (TO or CC)
+- TO : clean recipient's name, ready for post-processing /only in ExportAllEmail_Details_full file
+- TO_ADDRESS : recipient's email address /only in ExportAllEmail_Details_full file
+- TO_DOMAIN : recipient's email domain /in ExportAllEmail_Details_flat file, this field is set to "MULTI" in case the domains are different
+- TO_NAME : recipient's raw name /only in ExportAllEmail_Details_full file
+- TYPE : type of reception (TO or CC) /only in ExportAllEmail_Details_full file
 - RECIPIENT_NUMBER : number of recipients
 - RECIPIENT_NUMBER_TO : number of recipients (TO)
 - RECIPIENT_NUMBER_CC : number of recipients (CC)
